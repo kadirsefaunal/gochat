@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Socket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="socket.io.js"></script>
+    <script>
+        $(document).ready(function () {
+            var socket = io.connect('http://localhost:5000');
+
+            socket.on('message', function (message) {
+                console.log(message);
+
+                // TODO: Add to key control
+                if (typeof message === "object") {
+                    $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p><br/>");    
+                } else {
+                    if (message.username === $('#to').val()) {
+                        $('#messages').append("<b>" + message.key + " kullanıcı " + message.message + "</b>")    
+                    }
+                }
+            });
+            
+            $('#connect').click(function () {
+                var username = $("#username").val();
+                socket.emit("set-user", username);    
+            });
+
+            $('#send').click(function () {
+                message = {
+                    from: $("#username").val(),
+                    to: $('#to').val(),
+                    message: $('#msg').val()
+                };
+                console.log(message);
+                console.log(JSON.stringify(message));
+
+                socket.emit('message', JSON.stringify(message));
+            });
+
+            socket
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="username">
+        <input type="text" id="to">
+        <button id="connect">Connect</button>
+    </div>
+
+    <div id="messages">
+        
+    </div>
+
+    <div>
+        <input type="text" id="msg">
+        <button id="send">Send</button>
+    </div>
+</body>
+
+</html>
