@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -33,7 +32,6 @@ func main() {
 	server.On("connection", func(so socketio.Socket) {
 		so.On("set-user", func(user string) {
 			users[user] = so
-			fmt.Println(users)
 
 			keys := make([]string, 0, len(users))
 			for key := range users {
@@ -48,7 +46,6 @@ func main() {
 		so.On("message", func(msg string) {
 			jsonMsg := Message{}
 			json.Unmarshal([]byte(msg), &jsonMsg)
-			fmt.Println(jsonMsg)
 
 			toSo := users[jsonMsg.To]
 			if toSo != nil {
@@ -76,7 +73,6 @@ func main() {
 				socket.Emit("message", user)
 			}
 
-			fmt.Println(users)
 			log.Println("Disconnect!")
 		})
 	})

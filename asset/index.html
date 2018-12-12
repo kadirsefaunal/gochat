@@ -15,15 +15,10 @@
             var socket = io.connect('http://localhost:5000');
 
             socket.on('message', function (message) {
-                console.log(message);
-
-                // TODO: Add to key control
-                if (typeof message === "object") {
-                    $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p>");    
+                if ("username" in message) {
+                    $('#messages').append("<b>" + message.username + " " + message.message + "</b>")
                 } else {
-                    if (message.username === $('#to').val()) {
-                        $('#messages').append("<b>" + message.key + " kullanıcı " + message.message + "</b>")    
-                    }
+                    $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p>");
                 }
             });
             
@@ -38,10 +33,9 @@
                     to: $('#to').val(),
                     message: $('#msg').val()
                 };
-                console.log(message);
-                console.log(JSON.stringify(message));
 
                 socket.emit('message', JSON.stringify(message));
+                $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p>");
             });
 
             socket.on('user-list', function (users) {
