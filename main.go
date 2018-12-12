@@ -9,12 +9,14 @@ import (
 	"github.com/googollee/go-socket.io"
 )
 
+// Message keeps message informations
 type Message struct {
 	From    string `json:"from"`
 	To      string `json:"to"`
 	Message string `json:"message"`
 }
 
+// User keeps disconnected user information
 type User struct {
 	UserName string `json:"username"`
 	Message  string `json:"message"`
@@ -32,6 +34,15 @@ func main() {
 		so.On("set-user", func(user string) {
 			users[user] = so
 			fmt.Println(users)
+
+			keys := make([]string, 0, len(users))
+			for key := range users {
+				keys = append(keys, key)
+			}
+
+			for _, socket := range users {
+				socket.Emit("user-list", keys)
+			}
 		})
 
 		so.On("message", func(msg string) {

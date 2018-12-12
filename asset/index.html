@@ -19,7 +19,7 @@
 
                 // TODO: Add to key control
                 if (typeof message === "object") {
-                    $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p><br/>");    
+                    $('#messages').append("<p><b>" + message.from + ": </b>" + message.message + "</p>");    
                 } else {
                     if (message.username === $('#to').val()) {
                         $('#messages').append("<b>" + message.key + " kullanıcı " + message.message + "</b>")    
@@ -44,21 +44,27 @@
                 socket.emit('message', JSON.stringify(message));
             });
 
-            socket
+            socket.on('user-list', function (users) {
+                $.each(users, function (i, val) {
+                    if ($('#username').val() !== val) {
+                        $('#user-list').append('<li>' + val + '</li>');    
+                    }
+                });
+            });
         });
     </script>
 </head>
 
 <body>
+    <ul id="user-list"></ul>
+
     <div>
         <input type="text" id="username">
         <input type="text" id="to">
         <button id="connect">Connect</button>
     </div>
 
-    <div id="messages">
-        
-    </div>
+    <div id="messages"></div>
 
     <div>
         <input type="text" id="msg">
